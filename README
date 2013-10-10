@@ -1,0 +1,39 @@
+Copyright 2013 Thomas Heisler
+
+Introduction
+
+The vast majority of the effort in data analysis is finding and normalizing the data.  To that end, a general purpose engine to standardize data sets is useful.  For this example, I chose CSV files as the data format.
+
+One of my goals is to troll public data sets to discover novel associations. This influenced the design, most 
+
+
+License
+
+This software is provided under the terms of the MIT license (http://opensource.org/licenses/mit-license.php)
+
+
+What It Does
+
+The scripts contained here will turn text and numeric data in CSV form into scaled integers.  Numbers will be scaled to an integer range, which the user may specify.  Text values are enumerated and given unique integer identifiers.  A new CSV file is created containing only the scaled integer values.
+
+In more detail, three passes are required. The passes are:
+1. Classify: Determine whether each value is text or numeric
+2. Range: Determine the range of values. For numeric values, this is a minimum and maximum. For text values, it is the set of enumerated values
+3. Scale: Go through each record in the input, scale the values according to the relevant ranges, and produce the output
+
+
+How It Works
+
+Two implementations will be provided. One is a simple script that performs all three passes as a single program. The second is a set of scripts that perform the same using streaming map/reduce. Both sets of scripts perform the same functions. 
+
+
+Why Python?
+
+I chose Python for ease and speed of development. Because this application will be I/O bound, raw processing efficiency is not a major concern. Since this works line by line, the memory footprint of the traditional application stays small. Also, it has been awhile since I worked in Python and I want to refresh my skills.
+
+
+
+Releases
+
+This project is still in development, and no stable release is available.
+
