@@ -1,0 +1,21 @@
+In the source directory:
+
+Files beginning with "test_" are for testing. "test_*.py" are unit test scripts. "test_*.sh" are integration test scripts.
+
+run.sh will run the entire process locally, and takes only an input and output file names as arguments.
+
+The process uses six Python programs in this order:
+
+1. classify_mapper.py 
+2. classify_reducer.py
+3. range_mapper.py
+4. range_reducer.py
+5. scale_mapper.py
+6. scale_reducer.py
+
+These processes are designed to be compatable with Hadoop Streaming, which in a nutshell means all input is taken from stdin and output is sent to stdout.
+
+In general, you can run like a single-worker Hadoop cluster by piping the the mapper output to the reducer. This is quite effectiver for smaller input.
+
+In my testing, ~100K lines of input with ~25 columns (see Batting.csv in the test data) takes just a few seconds for each step (classify, range, scale). This means a serial process is viable for fairly large inputs, certainly in the 10M line range.
+
