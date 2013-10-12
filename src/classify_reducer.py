@@ -15,7 +15,7 @@ def main(argv):
 
 def extract_data(reader):
   results = {}
-  # Save first line
+
   line = reader.readline()
   
   try:
@@ -41,9 +41,8 @@ def extract_data(reader):
 
 def write_results(results):
   try:
-    sorted_results = sorted(results)
-    for result in sorted_results:
-      print str(result) + "\t" + str(sorted_results[result])
+    for result in results:
+      print str(result) + "\t" + str(results[result])
   except:
     sys.stderr.write("Unexpected error")
     raise

@@ -1,6 +1,5 @@
 #!/usr/bin/python
-import sys 
-import re
+import sys
 import csv
 
 def get_csv_reader(input_file):
