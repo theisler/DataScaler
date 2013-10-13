@@ -106,10 +106,10 @@ def process_args(args):
     while cnt < len(args):
       arg = args[cnt].lower()
     
-      if arg == '--coltypes':
+      if arg == '--rangedata':
         cnt += 1
         if cnt < len(args):
-          options['field_types'] = args[cnt]
+          options['rangedata'] = args[cnt]
           
       else:
         messages += 'Unknown argument ' + arg + '\n'
@@ -123,7 +123,7 @@ def process_args(args):
 
 
 def initialize_options():
-  return { 'field_types':'' }
+  return { 'rangedata':'' }
 
 
 def main(argv):
@@ -134,7 +134,7 @@ def main(argv):
     sys.stderr.write('...Processing continues...\n')
 
 
-  field_types = options['field_types']
+  range_file_name = options['rangedata']
   
   csv_reader = get_csv_reader(sys.stdin)
   cnt_row = 0

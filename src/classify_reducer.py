@@ -16,23 +16,16 @@ def main(argv):
 def extract_data(reader):
   results = {}
 
-  line = reader.readline()
   
   try:
+    line = reader.readline()
     while line:
-    # for line in sys.stdin:
       words = prep_line(line)
-      #try:
       (col_name, col_type) = extract_key_value(words)
       
       record_values(results, col_name, col_type)
       
       line = reader.readline()
-      
-      #except:
-      #  sys.stderr.write("Aborting - Unexpected error (" + line + ")")
-      #  raise
-
   except "end of file":
     None
 

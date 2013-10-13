@@ -24,8 +24,7 @@ def extract_data(reader):
       
       record_values(results, col_name, col_type, value)
       
-      line = reader.readline()
-      
+      line = reader.readline()      
   except "end of file":
     None
 

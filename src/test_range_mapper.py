@@ -27,12 +27,20 @@ class TestRangeMapper(unittest.TestCase):
     (options, message) = range_mapper.process_args(args)
     self.assertEqual( options, {'field_types':'ABCDEF'} )
     self.assertEqual( message, 'Unknown argument --verbose\n' )
+
     
   def test_process_args4(self):
     args = ['--verbose']
     (options, message) = range_mapper.process_args(args)
     self.assertEqual( options, {'field_types':''} )
     self.assertEqual( message, 'Unknown argument --verbose\n' )
+    
+
+  def test_process_args5(self):
+    args = ['a', 'b', 'c']
+    (options, message) = range_mapper.process_args(args)
+    self.assertEqual( options, {'field_types':''} )
+    self.assertEqual( message, 'Unknown argument a\nUnknown argument b\nUnknown argument c\n' )
     
 
   def test_initialize_options1(self):
@@ -161,7 +169,6 @@ class TestRangeMapper(unittest.TestCase):
     expected_value = -19400
     retval = range_mapper.extract_column_data(value, field_type)
     self.assertEqual(retval, expected_value)
-
 
 
 if __name__ == '__main__':

@@ -58,7 +58,5 @@ class TestClassifyReducer(unittest.TestCase):
     self.assertEqual(extract_result, classify_reducer.extract_key_value(words))
 
 
-
-
 if __name__ == '__main__':
     unittest.main()
