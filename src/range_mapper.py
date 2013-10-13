@@ -80,15 +80,21 @@ def extract_unknown(col_string):
     return extract_text(col_string)
 
   
-
 def output_field_data(col_num, field_type, col_data):
+  output = format_output_field_data(col_num, field_type, col_data)
+  if len(output) > 0:
+    print output
+
+
+def format_output_field_data(col_label, field_type, col_data):
+  output = ""
+  
   if field_type == 'N':
-    output = "Number:" + str(cnt_col) + "\t" + str(col_data)
+    output = "Number:" + str(col_label) + "\t" + str(col_data) + '|' + str(col_data)
   else:
     if len(col_data) > 0: # Suppress blank values
-      output = "Text:" + str(cnt_col) + "\t" + col_data
-    
-  print output
+      output = "Text:" + str(col_label) + "\t" + col_data
+  return output
 
 
 def process_args(args):
@@ -131,7 +137,6 @@ def main(argv):
 
 
   field_types = options['field_types']
-  results = initialize_results()
   
   csv_reader = get_csv_reader(sys.stdin)
   cnt_row = 0

@@ -1,7 +1,9 @@
 # Run unit tests
 START_TIME=$(date +%s)
 
+echo "Running Classify Mapper unit tests"
 python ./test_classify_mapper.py
+echo "Running Classify Reducer unit tests"
 python ./test_classify_reducer.py
 
 # Run data tests
