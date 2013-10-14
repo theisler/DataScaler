@@ -110,7 +110,10 @@ def process_args(args):
         cnt += 1
         if cnt < len(args):
           options['rangedata'] = args[cnt]
-          
+
+      elif arg == "--help":
+        options.update( {'help':''} )
+      
       else:
         messages += 'Unknown argument ' + arg + '\n'
       
@@ -126,15 +129,55 @@ def initialize_options():
   return { 'rangedata':'' }
 
 
+def print_help():
+  help_text = "scale_mapper.py usage:\n"
+  help_text += "\tpython scale_mapper.py --rangedata <file name>" 
+  help_text += "\tThe range data file holds the min and max of numeric values" 
+  help_text += "\tand an enumerated list of all the text values"
+              
+  return help_text
+
+def validate_args(options, messages):
+  if len(messages) > 0:
+    return False
+  if len(options['rangedata']) == 0:
+    return False
+  if options.has_key('help'):
+    return False
+  
+  return True
+
+
+def read_range_file(file_name):
+  results = {}
+  f = open(file_name, "r")
+
+  for line in f:
+    process_range_file_line(line, results)
+
+  f.close()
+    
+def process_range_file_line(line, results):
+  line = prepare_range_file_line(line)
+  (record_type, col_name) = extract
+
+
+def prepare_range_file_line(line):
+  retval = line.strip()
+  return retval
+
+  
 def main(argv):
   args = sys.argv[1:]
   (options, messages) = process_args(args)
-  if len(messages)>0:
-    sys.stderr.write(messages)
-    sys.stderr.write('...Processing continues...\n')
+  if not validate_args(options, messages):
+    print help_text()
+    exit(1)
 
 
   range_file_name = options['rangedata']
+
+  range_data = read_range_file(range_file_name)
   
   csv_reader = get_csv_reader(sys.stdin)
   cnt_row = 0

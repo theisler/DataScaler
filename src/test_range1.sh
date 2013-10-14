@@ -9,7 +9,10 @@ python ./test_range_reducer.py
 
 # Run data tests
 echo "Range Batting.csv"
-cat ../testdata/baseball/Batting.csv | python ./range_mapper.py --coltypes TNNTTNNNNNNNNNNNNNNNNNNN | sort | python ./range_reducer.py > test_range_batting.tmp
+#cat ../testdata/baseball/Batting.csv | python ./range_mapper.py --coltypes TNNTTNNNNNNNNNNNNNNNNNNN | sort -n | python ./range_reducer.py > test_range_batting.tmp
+##cat ../testdata/baseball/Batting.csv | python ./range_mapper.py --coltypes TNNTTNNNNNNNNNNNNNNNNNNN | sort -n > test_range_mapper_batting.tmp
+cat ../testdata/baseball/Batting.csv | python ./range_mapper.py --coltypes TNNTTNNNNNNNNNNNNNNNNNNN > test_range_mapper_batting.tmp
+cat test_range_mapper_batting.tmp | python ./range_reducer.py > test_range_batting_reducer.tmp
 echo ""; echo ""
 
 echo "Range Fielding.csv"
