@@ -190,7 +190,9 @@ def main(argv):
       if cnt_row == 0:
         headers = process_header_row(row)
       else:
-        process_row(row, field_types)
+        field_data = process_row(row, field_types)
+        field_data
+        emit_row(sys.stdout(
 
       cnt_row += 1
                 

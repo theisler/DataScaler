@@ -211,8 +211,6 @@ class TestScaleMapper(unittest.TestCase):
     input_data = ['ABC', '2.4', '4.59', ' -4.3e3\t\n', 'QA', '1.3']
     output_data = ['ABC', 2.4, '4.59', -4300, 'QA', 1.3]
     self.assertEqual(scale_mapper.process_row(input_data, field_types), output_data)
-    
-
 
 
 if __name__ == '__main__':
