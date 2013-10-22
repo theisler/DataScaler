@@ -174,6 +174,45 @@ class TestScaleMapper(unittest.TestCase):
     self.assertEqual(col_out, scale_mapper.extract_column_data(col_in, field_type))
 
 
+  def test_process_header_row1(self):
+    input_data = ['a', 'b', 'c', 'd']
+    output_data = input_data
+    self.assertEqual(scale_mapper.process_header_row(input_data), output_data)
+  
+
+  def test_process_header_row2(self):
+    input_data = [' a', 'b ', ' c ', '\td']
+    output_data = ['a', 'b', 'c', 'd']
+    self.assertEqual(scale_mapper.process_header_row(input_data), output_data)
+  
+
+  def test_process_header_row3(self):
+    input_data = ['a\tB', 'b q', 'c   \t', ' d\t  e\n']
+    output_data = ['a\tB', 'b q', 'c', 'd\t  e']
+    self.assertEqual(scale_mapper.process_header_row(input_data), output_data)
+
+
+  def test_process_row1(self):
+    field_types = 'TNTN'
+    input_data = ['ABC', '2.4', '4.59', ' -4.3e3\t\n']
+    output_data = ['ABC', 2.4, '4.59', -4300]
+    self.assertEqual(scale_mapper.process_row(input_data, field_types), output_data)
+    
+
+  def test_process_row2(self):
+    field_types = 'TNTN'
+    input_data = ['ABC', '2.4', '4.59', ' -4.3e3\t\n', 'QA', '1.3']
+    output_data = ['ABC', 2.4, '4.59', -4300, 'QA', '1.3']
+    self.assertEqual(scale_mapper.process_row(input_data, field_types), output_data)
+    
+
+  def test_process_row3(self):
+    field_types = 'TNTNTNTNTNTN'
+    input_data = ['ABC', '2.4', '4.59', ' -4.3e3\t\n', 'QA', '1.3']
+    output_data = ['ABC', 2.4, '4.59', -4300, 'QA', 1.3]
+    self.assertEqual(scale_mapper.process_row(input_data, field_types), output_data)
+    
+
 
 
 if __name__ == '__main__':

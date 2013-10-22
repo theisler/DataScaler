@@ -18,17 +18,20 @@ def process_header_row(row):
 
 def process_row(row, field_types):
   cnt_col = 0
+  results = []
   for col in row:
     col = col.strip()
-    
-    if len(col) > 0: # Suppress blank values
-      field_type = get_field_type(cnt_col, field_types)
-      column_data = extract_column_data(col, field_type)
-      output_field_data(cnt_col, field_type, column_data)
 
+    if len(col) == 0: # Suppress blank values
+      val = None
+    else:        
+      val = extract_column_data(col, get_field_type(cnt_col, field_types))
+
+      
+    results.append(val)                
     cnt_col += 1
     
-  return
+  return results
 
 
 def get_field_type(col_num, field_types):
