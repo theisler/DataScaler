@@ -32,6 +32,10 @@ Why Python?
 I chose Python for ease and speed of development. Because this application will be I/O bound, raw processing efficiency is not a major concern. Since this works line by line, the memory footprint of the traditional application stays small. Also, it has been awhile since I worked in Python and I want to refresh my skills.
 
 
+Status
+
+This project is a bit rough. The core functionality is in place, but it needs a refactoring pass. Unit test coverage is pretty good, but needs some of the file operations mocked to complete the test suite.
+
 
 Releases
 
