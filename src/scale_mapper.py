@@ -26,7 +26,6 @@ class ScalingData:
   def set_min(self, min_value):
     if min_value < self.min:
       self.min = float(min_value)
-    return self.min
 
   def get_max(self):
     return self.max
@@ -34,11 +33,12 @@ class ScalingData:
   def set_max(self, max_value):
     if max_value > self.max:
       self.max = float(max_value)
-    return self.max
   
 
   def add_text_value(self, text_value):
-
+    text_value = str(text_value)
+    if not self.text_list.has_key(text_value):
+      self.text_list.update( {text_value:len(self.text_list)} )
     
   def scale(self, value):
     # TODO: Should over-ride as type is set, or create numeric and text sub-classes
@@ -62,7 +62,7 @@ class ScalingData:
       return 0
 
   def scale_number(self, value):
-    retval = (float(value) - self.min) / (self.max - self.min)
+    retval = int(round((float(value) - self.min) / (self.max - self.min) * scale_factor,0))
     return retval
 
 
@@ -77,32 +77,11 @@ class ScalingData:
     return retval
 
 
-class TextScalingData:
-  def __init__(self):
-    self.text_list = {}
-
-  
-  def add_data(self, list_id, value):
-    if not self.text_list.has_key(list_id):
-      self.text_list.update( {list_id: {}} ) # Add a new dictionary as needed
-      
-    # Add the value as a key and an increasing scalar as the value (hence using len)
-    self.text_list[list_id].update(value, len(self.text_list[list_id]))
-
-
-  def get_data(self, list_id, key):
-    retval = ''
-    if self.text_list.has_key(list_id):
-      if self.text_list[list_id].has_key(key):
-        retval = self.text_list[list_id][key]
-    return retval
-  
-
-
 # Global variables
 csv_reader = csv.reader
 csv_writer = csv.writer
 output_buffer = io.BytesIO()
+scale_factor = 10000
 
 
 def get_csv_reader(input_file):
@@ -124,7 +103,7 @@ def process_header_row(row):
   return col_names
 
 
-def process_row(row, field_types):
+def process_row(row, scalers):
   cnt_col = 0
   results = []
   for col in row:
@@ -133,19 +112,19 @@ def process_row(row, field_types):
     if len(col) == 0: # Suppress blank values
       val = None
     else:        
-      val = extract_column_data(col, get_field_type(cnt_col, field_types))
+      val = extract_column_data(col, get_field_type(cnt_col, scalers))
+      val = scalers[cnt_col].scale(val)
 
-      
     results.append(val)                
     cnt_col += 1
     
   return results
 
 
-def get_field_type(col_num, field_types):
-  # Use the type specified in the arguments if available
-  if col_num >= 0 and col_num < len(field_types):
-    field_type = field_types[col_num]
+def get_field_type(col_num, scalers):
+  # Check type of scaler
+  if col_num >= 0 and col_num < len(scalers):
+    field_type = scalers[col_num].get_scale_type()
   else:
     field_type = 'T'
   
@@ -271,16 +250,58 @@ def read_range_file(file_name):
   return results
 
 
-def process_range_file_line(line, results):
+def extract_data_from_line(line):
+  col_type = ''
+  col_name = ''
+  value = ''
+  
   line = prepare_range_file_line(line)
-  (record_type, col_name, value) = extract_data_from_line(line)
-  if record_type == 'Text':
-    None
 
+  line_part = line.split('\t', 1) # Only split at the first \t in case a text value has an embedded \t
+  type_col = line_part[0].split(':')
+
+  col_type = type_col[0]
+  col_name = int(type_col[1])
+
+  if col_type == 'Text':
+    value = line_part[1]
+  elif col_type == 'Number':
+    text_value = line_part[1].split('|')
+    value = [float(text_value[0]), float(text_value[1])]
+    
+  else:
+    raise ValueError('Range file contains an invalid entry: ' + line)
+  
+
+  return (col_type, col_name, value)
+
+
+def process_range_file_line(line, results):
+  (record_type, col_name, value) = extract_data_from_line(line)
+
+  if record_type == 'Text':
+    if not results.has_key(col_name):
+      scaler = ScalingData()
+      scaler.set_scale_type('T')
+      results.update( {col_name:scaler} )
+
+    scaler = results[col_name]
+    scaler.add_text_value(value)
+  elif record_type == 'Number':
+    if not results.has_key(col_name):
+      scaler = ScalingData()
+      scaler.set_scale_type('N')
+      results.update( {col_name:scaler} )
+
+    scaler = results[col_name]
+    scaler.set_min(value[0])
+    scaler.set_max(value[1])
+    
 
 def prepare_range_file_line(line):
   retval = line.strip()
   return retval
+
 
 def format_output_line(row_data):
   retval = ""
@@ -311,7 +332,7 @@ def main(argv):
   range_data = read_range_file(range_file_name)
   
   # Need to explain slight of hand for output_buffer/stdio
-  (csv_reader, csv_writer) = init_io(sys.stdin, sys.stdio)
+  (csv_reader, csv_writer) = init_io(sys.stdin, sys.stdout)
   
   cnt_row = 0
   
@@ -320,9 +341,8 @@ def main(argv):
       if cnt_row == 0:
         headers = process_header_row(row)
       else:
-        field_data = process_row(row, field_types)
+        field_data = process_row(row, range_data)
         csv_writer.writerow(field_data) # 
-        sys.stdout.write(output_buffer) #
 
       cnt_row += 1
                 
